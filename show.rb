@@ -43,11 +43,11 @@ class Show
   end
 
   def is_build_complete?
-    self.build ? true : false  
+    build ? true : false  
   end
 
   def start
-    if self.is_build_complete? 
+    if is_build_complete? 
       puts "Let's start the show!!"
       list_nominees
     else
@@ -59,13 +59,8 @@ end
 show = Show.new("TD Patent Awards", "The best patent awards show in the world!")
 
 nominee1 = Nominee.new("Tom", "Enigneer")
-# puts nominee1.to_s
-# show.add_nominee(Nominee.new("Jerry", "Enigneer"))
-# show.add_nominee(Nominee.new("Cindy", "Enigneer"))
 
 nominee1.add_invention("The widget maker 1", "It makes the best widgets")
-# show.add_invention_to_show(Invention.new("The widget maker 2", "It makes the best widgets"))
-# show.add_invention_to_show(Invention.new("The widget maker 3", "It makes the best widgets"))
 
 show.add_nominee(nominee1)
 

@@ -1,12 +1,12 @@
-
 # show.rb
 require 'date'
 require './nominee'
 require './invention'
 require './award'
 
-class ShowBuildFail < StandardError
-end
+class ShowBuildFail < StandardError; end
+class EmptyNomineesError < StandardError; end
+class EmptyAwardsError < StandardError; end
 
 class Show
   attr_accessor :name, :description, :date
@@ -23,6 +23,10 @@ class Show
     @nominees << nominee
   end
 
+    def add_award(award)
+    @awards << award
+  end
+
   def list_nominees
     puts "Your nominees are:"
     @nominees.each do |nominee|
@@ -30,43 +34,73 @@ class Show
     end
   end
 
-  def add_award_to_show(award)
-    @awards << award
+  def list_awards
+    puts "\nThe awards being presented today:"
+    @awards.each do |award|
+      puts "#{award.title}: #{award.description}"
+    end
   end
 
   def build
-    puts "Let's build the #{@date.strftime("%Y")} #{@name} show. #{@description}"
-    if @nominees.empty?
-      return false
-    end
-    true
+    puts "Let's build the #{@date.strftime("%Y")} #{@name} show. #{@description} \n\n"
+    puts "Your show includes:"
+    
+    raise EmptyNomineesError, "You can't have an awards show without nominees." if @nominees.empty?
+    raise EmptyAwardsError, "You can't have an awards show without awards." if @awards.empty?
+    
+    puts "#{@nominees.size} nominees"
+    puts "#{@awards.size} awards"
+
+    return true
   end
 
   def is_build_complete?
-    build ? true : false  
+    self.build ? true : false  
   end
 
   def start
     if is_build_complete? 
-      puts "Let's start the show!!"
+      puts "Let's start the show!! \n\n"
       list_nominees
+      list_awards
     else
       raise ShowBuildFail, "Show failed to build"
     end
   end
+
+  def conclude
+    puts "\nThat's our show. Thanks for coming and now it's time to 🎉 🕺 🎤"
+  end
 end
 
+# create show
 show = Show.new("TD Patent Awards", "The best patent awards show in the world!")
 
-nominee1 = Nominee.new("Tom", "Enigneer")
+# create nominees
+nominee1 = Nominee.new("Jeremy", "Super Enigneer")
+nominee2 = Nominee.new("Cory", "Enigneer")
+nominee3 = Nominee.new("Steve", "Design Enigneer")
 
-nominee1.add_invention("The widget maker 1", "It makes the best widgets")
+# create inventions and add to nominee
+nominee1.add_invention("The show maker widget", "It makes the best shows widgets")
+nominee2.add_invention("The code maker widget", "It makes the best code widgets")
+nominee3.add_invention("The deisgn maker widget", "It makes the best design widgets")
 
+# add nominee to show
 show.add_nominee(nominee1)
+show.add_nominee(nominee2)
+show.add_nominee(nominee3)
 
-# show.add_award_to_show(Award.new("Granted Patent of the Year", "description here"))
-# show.add_award_to_show(Award.new("Invention of the Year", "description here"))
-# show.add_award_to_show(Award.new("Visionary Award", "description here"))
+# create and add award to show
+show.add_award(Award.new("Granted Patent of the Year", "This award was created to address the need to recognize the LOB that owns the
+implementation and execution of the invention"))
+show.add_award(Award.new("Invention of the Year", "In the opinion of the Patent Steering Committee, the invention best satisfies the
+Core Criteria."))
+show.add_award(Award.new("Visionary Award", "In the opinion of the Patent Steering Committee, the invention is anticipated to best
+satisfy the Core Criteria in 3-5 years."))
+
 
 show.start
+
+show.conclude
 

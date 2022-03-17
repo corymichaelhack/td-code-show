@@ -3,10 +3,12 @@ require 'date'
 require './nominee'
 require './invention'
 require './award'
+require './presenter'
 
 class ShowBuildFail < StandardError; end
 class EmptyNomineesError < StandardError; end
 class EmptyAwardsError < StandardError; end
+class EmptyPrentersError < StandardError; end
 
 class Show
   attr_accessor :name, :description, :date
@@ -17,18 +19,23 @@ class Show
     @date = Time.new(2022,12,31)
     @nominees = []
     @awards = []
+    @presenters = []
   end
 
   def add_nominee(nominee)
     @nominees << nominee
   end
 
-    def add_award(award)
+  def add_award(award)
     @awards << award
   end
 
+  def add_presenter(presenter)
+    @presenters << presenter
+  end
+
   def list_nominees
-    puts "Your nominees are:"
+    puts "\nYour nominees are:"
     @nominees.each do |nominee|
       puts "#{nominee.name},  #{nominee.title} for #{nominee.list_inventions}"
     end
@@ -41,15 +48,24 @@ class Show
     end
   end
 
+  def list_presenters
+    puts "\nOur presenters today are:"
+    @presenters.each do |presenter|
+      puts "#{presenter.name}: #{presenter.title}"
+    end
+  end
+
   def build
     puts "Let's build the #{@date.strftime("%Y")} #{@name} show. #{@description} \n\n"
     puts "Your show includes:"
     
     raise EmptyNomineesError, "You can't have an awards show without nominees." if @nominees.empty?
     raise EmptyAwardsError, "You can't have an awards show without awards." if @awards.empty?
+    raise EmptyPresenterError, "You can't have an awards show with presenters." if @presenters.empty?
     
     puts "#{@nominees.size} nominees"
     puts "#{@awards.size} awards"
+    puts "#{@presenters.size} presenters"
 
     return true
   end
@@ -61,6 +77,7 @@ class Show
   def start
     if is_build_complete? 
       puts "Let's start the show!! \n\n"
+      list_presenters
       list_nominees
       list_awards
     else
@@ -75,6 +92,16 @@ end
 
 # create show
 show = Show.new("TD Patent Awards", "The best patent awards show in the world!")
+
+# create presenters 
+presenter = Presenter.new("Presenter Name", "Presenter title here")
+president_presenter = Presenter.new("TD President Name Here", "President") 
+entertainer = Presenter.new("Gob Bluth", "Illusionist")
+
+
+show.add_presenter(presenter)
+show.add_presenter(president_presenter)
+show.add_presenter(entertainer)
 
 # create nominees
 nominee1 = Nominee.new("Jeremy", "Super Enigneer")
